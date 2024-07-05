@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: go-test-task
+spec:
+  workspaces:
+    - name: source
+      description: The workspace containing the source code
+  steps:
+    - name: checkout-source
+      image: alpine/git
+      script: |
+        git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace/source
+    - name: run-tests
+      image: golang:1.20
+      workingDir: /workspace/source
+      script: |
+        go test ./.. > tests.log
+        cat tests.log

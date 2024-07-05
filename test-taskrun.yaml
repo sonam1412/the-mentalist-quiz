@@ -1,0 +1,13 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: go-test-taskrun
+spec:
+  taskRef:
+    name: go-test-task
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+        claimName: my-pvc
+    
+        
