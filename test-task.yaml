@@ -7,13 +7,26 @@ spec:
     - name: source
       description: The workspace containing the source code
   steps:
+    - name: clean-workspace
+      image: alpine
+      script: |
+        # Delete non-hidden files and directories
+        rm -rf /workspace/source/*
+        # Delete files and directories starting with . but excluding ..
+        rm -rf /workspace/source/.[!.]*
+        # Delete files and directories starting with .. plus any other character
+        rm -rf /workspace/source/..?*
     - name: checkout-source
       image: alpine/git
       script: |
         git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace/source
+    - name: list-files
+      image: alpine
+      script: |
+        ls -l /workspace/source
     - name: run-tests
       image: golang:1.20
-      workingDir: /workspace/source
       script: |
-        go test ./.. > tests.log
+        cd /workspace/source
+        go test ./... > tests.log
         cat tests.log

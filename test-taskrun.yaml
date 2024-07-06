@@ -9,5 +9,3 @@ spec:
     - name: source
       persistentVolumeClaim:
         claimName: my-pvc
-    
-        
