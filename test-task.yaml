@@ -25,7 +25,7 @@ spec:
       script: |
         ls -l /workspace/source
     - name: run-tests
-      image: golang:1.20
+      image: golang:1.21
       script: |
         cd /workspace/source
         go test ./... > tests.log
