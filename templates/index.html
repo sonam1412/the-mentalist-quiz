@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mentalist Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 50%; margin: auto; padding-top: 50px; }
+        .question { margin: 20px 0; }
+        .answer { margin: 20px 0; color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>The Mentalist Quiz</h1>
+        <div class="question">
+            <label for="question">Select a question:</label>
+            <select id="question">
+                <option value="1">What does CBI stand for?</option>
+                <option value="2">What is Patrick Jane's special skill?</option>
+            </select>
+        </div>
+        <button onclick="getAnswer()">Get Answer</button>
+        <div class="answer" id="answer"></div>
+    </div>
+    <script>
+        function getAnswer() {
+            const question = document.getElementById('question').value;
+            fetch(`/quiz?question=${question}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('answer').innerText = data.answer;
+                });
+        }
+    </script>
+</body>
+</html>
