@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: go-test-pipelinerun
+spec:
+  pipelineRef:
+    name: go-test-pipeline
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+        claimName: my-pvc
