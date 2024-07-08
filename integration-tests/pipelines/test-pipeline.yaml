@@ -8,7 +8,14 @@ spec:
   tasks:
     - name: my-task
       taskRef:
-        name: go-test-task
+        resolver: git
+        params:
+        - name: url 
+          value: https://github.com/dheerajodha/the-mentalist-quiz
+        - name: revision
+          value: main
+        - name: pathInRepo
+          value: integration-tests/task/test-task.yaml
       workspaces:
         - name: source
           workspace: source

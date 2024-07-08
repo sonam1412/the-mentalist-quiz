@@ -4,7 +4,14 @@ metadata:
   name: go-test-pipelinerun
 spec:
   pipelineRef:
-    name: go-test-pipeline
+    resolver: git
+    params:
+    - name: url 
+      value: https://github.com/dheerajodha/the-mentalist-quiz
+    - name: revision
+      value: main
+    - name: pathInRepo
+      value: integration-tests/pipelines/test-pipeline.yaml
   workspaces:
     - name: source
       persistentVolumeClaim:
