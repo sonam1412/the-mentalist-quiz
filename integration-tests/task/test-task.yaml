@@ -3,30 +3,18 @@ kind: Task
 metadata:
   name: go-test-task
 spec:
-  workspaces:
-    - name: source
-      description: The workspace containing the source code
   steps:
-    - name: clean-workspace
-      image: alpine
-      script: |
-        # Delete non-hidden files and directories
-        rm -rf /workspace/source/*
-        # Delete files and directories starting with . but excluding ..
-        rm -rf /workspace/source/.[!.]*
-        # Delete files and directories starting with .. plus any other character
-        rm -rf /workspace/source/..?*
     - name: checkout-source
       image: alpine/git
       script: |
-        git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace/source
+        git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
     - name: list-files
       image: alpine
       script: |
-        ls -l /workspace/source
+        ls -l /workspace
     - name: run-tests
       image: golang:1.21
-      workingDir: /workspace/source
+      workingDir: /workspace
       script: |
         go test ./... > tests.log
         cat tests.log

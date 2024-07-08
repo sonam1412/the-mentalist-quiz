@@ -3,8 +3,6 @@ kind: Pipeline
 metadata:
   name: go-test-pipeline
 spec:
-  workspaces:
-    - name: source
   tasks:
     - name: my-task
       taskRef:
@@ -16,6 +14,3 @@ spec:
           value: main
         - name: pathInRepo
           value: integration-tests/task/test-task.yaml
-      workspaces:
-        - name: source
-          workspace: source
