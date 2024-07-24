@@ -23,9 +23,9 @@ func quizHandler(c *gin.Context) {
 	question := c.Query("question")
 	answer := ""
 	switch question {
-	case "1":
+	case "first-ques":
 		answer = "The CBI stands for California Bureau of Investigation."
-	case "2":
+	case "second-ques":
 		answer = "Patrick Jane has a keen sense of observation and deduction."
 	default:
 		answer = "Invalid question number."

@@ -15,9 +15,9 @@ func TestQuizHandler(t *testing.T) {
 		question string
 		expected string
 	}{
-		{"1", "The CBI stands for California Bureau of Investigation."},
-		{"2", "Patrick Jane has a keen sense of observation and deduction."},
-		{"3", "Invalid question number."},
+		{"first-ques", "The CBI stands for California Bureau of Investigation."},
+		{"second-ques", "Patrick Jane has a keen sense of observation and deduction."},
+		{"1", "Invalid question number."},
 	}
 
 	for _, tt := range tests {

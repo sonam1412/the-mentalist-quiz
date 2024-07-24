@@ -1,0 +1,25 @@
+{
+  "name": "the-mentalist-quiz",
+  "version": "1.0.0",
+  "description": "A sample project to learn Konflux",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dheerajodha/the-mentalist-quiz.git"
+  },
+  "keywords": [
+    "konflux"
+  ],
+  "author": "Dheeraj Singh Jodha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dheerajodha/the-mentalist-quiz/issues"
+  },
+  "homepage": "https://github.com/dheerajodha/the-mentalist-quiz#readme",
+  "devDependencies": {
+    "cypress": "^13.13.1"
+  }
+}
