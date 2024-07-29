@@ -7,14 +7,28 @@ spec:
     - name: checkout-source
       image: alpine/git
       script: |
-        git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
+        git clone -b ui-tests https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
     - name: list-files
       image: alpine
       script: |
         ls -l /workspace
-    - name: run-tests
+    - name: run-unit-tests
       image: golang:1.21
       workingDir: /workspace
       script: |
         go test ./... > tests.log
         cat tests.log
+    - name: start-application
+      image: golang:1.21
+      workingDir: /workspace
+      script: |
+        # Start the application
+        go build -o app-binary .
+    - name: run-ui-tests
+      image: cypress/included:13.13.0
+      workingDir: /workspace
+      script: |
+        ./app-binary &
+        sleep 30
+        # Run Cypress tests
+        cypress run --spec cypress/e2e/spec.cy.js

@@ -11,6 +11,6 @@ spec:
         - name: url 
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: main
+          value: "ui-tests"
         - name: pathInRepo
           value: integration-tests/task/test-task.yaml
