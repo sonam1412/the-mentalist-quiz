@@ -7,7 +7,7 @@ spec:
     - name: checkout-source
       image: alpine/git
       script: |
-        git clone -b ui-tests https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
+        git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
     - name: list-files
       image: alpine
       script: |
