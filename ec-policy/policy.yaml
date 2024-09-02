@@ -21,8 +21,9 @@ description: >-
 sources:
   - name: Custom Policy
     policy:
-      - github.com/enterprise-contract/ec-policies//policy/lib
+      - oci::quay.io/enterprise-contract/ec-release-policy:latest
       - github.com/dheerajodha/the-mentalist-quiz.git//ec-policy/rules?ref=add-custom-policy
 configuration:
   include:
     - verify_base_go_version
+    - cve
