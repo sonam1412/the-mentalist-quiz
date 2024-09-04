@@ -21,9 +21,9 @@ spec:
     - name: kubeconfig-dir
       optional: true
   results:
-    - name: output-result
+    - name: author
       type: string
-      description: some result can be emitted if someone wants to.
+      description: name of the author who triggered the released
   params:
     - name: script
       description: The Kubernetes CLI script to run

@@ -14,51 +14,79 @@ spec:
   params:
     - name: repository
       type: string
-      description: "The github repository where the release should be created"
+      description: "The github repository's name where the release should be created"
+    - name: username
+      type: string
+      description: "The github username of the repo where the release should be created"
     - name: release_version
       type: string
       description: "The version string of the new release"
-    - name: githubSecret
+    - name: commit_sha
       type: string
-      description: "The kube secret to use to authenticate to GitHub, containing one key: token"
-    - name: content_directory
+      description: "The commit SHA that triggered build in Konflux"
+    - name: release_author
       type: string
-      description: "The directory inside the workspace to find files for release"
-    - name: resultsDirPath
+      description: "The username of the release creator/requester"
+    - name: image_url
       type: string
-      description: Path to the results directory in the data workspace
+      description: "The url of the image built by Konflux"
   workspaces:
     - name: data
       description: The workspace where the binaries to release reside
   results:
-    - name: url
+    - name: release_url
       type: string
-      description: URL to inspect the created release
+      description: Release URL to inspect the created release
   steps:
-    - name: create-release-from-binaries
+    - name: create-github-release
       image: quay.io/konflux-ci/release-service-utils:e633d51cd41d73e4b3310face21bb980af7a662f
       script: |
         #!/usr/bin/env sh
+
+        # Disable verbose mode before handling sensitive information (GitHub token)
+        set +x
+
+        # Check if the GH_TOKEN is set
+        if [ -z "$GH_TOKEN" ]; then
+          echo "GH_TOKEN is not set!"
+          exit 1
+        fi
+
+        RELEASE_RESPONSE=$(curl -X POST \
+          -H "Authorization: token $GH_TOKEN" \
+          -H "Accept: application/vnd.github+json" \
+          https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases \
+          -d @- <<EOF
+          {
+            "tag_name": "$(params.release_version)",
+            "target_commitish": "$(params.commit_sha)",
+            "name": "Auto-generated Release by Konflux",
+            "body": ":tada: This release of the IMAGE:\n\`\`\`\n$(params.image_url)\n\`\`\`\n is created by the user: \`$(params.release_author)\` :sunglasses:",
+            "draft": false,
+            "prerelease": false
+          }
+        EOF
+        )
+
+        # Re-enable verbose mode for subsequent commands
         set -ex
 
-        RESULTS_FILE="$(workspaces.data.path)/$(params.resultsDirPath)/create-github-release-results.json"
-        
-        cd "$(workspaces.data.path)/$CONTENT_DIRECTORY"
-        set -o pipefail
-        shopt -s failglob
-        gh release create v$RELEASE_VERSION *.zip *.json *SHA256SUMS *.sig \
-          --repo $REPOSITORY --title "Release $RELEASE_VERSION" | tee $(results.url.path)
+        # Check for curl success
+        if [ $? -ne 0 ]; then
+          echo "Failed to create release"
+          exit 1
+        fi
 
-        jq -n --arg release "$(cat $(results.url.path))" '{"github-release": {"url": $release}}' | tee $RESULTS_FILE
+        RELEASE_URL=$(echo "$RELEASE_RESPONSE" | jq -r .html_url)
+
+        echo "Created release URL: $RELEASE_URL"
+
+        # Write the release URL to the task result
+        echo "$RELEASE_URL" > $(results.release_url.path)
+
       env:
         - name: GH_TOKEN
           valueFrom:
             secretKeyRef:
-              name: $(params.githubSecret)
+              name: my-github-secret
               key: token
-        - name: REPOSITORY
-          value: $(params.repository)
-        - name: RELEASE_VERSION
-          value: $(params.release_version)
-        - name: CONTENT_DIRECTORY
-          value: $(params.content_directory)
