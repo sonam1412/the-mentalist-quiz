@@ -1,0 +1,73 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: test-create-github-release
+spec:
+  description: |
+    Run the create-github-release task
+  workspaces:
+    - name: tests-workspace
+  tasks:
+    - name: setup
+      workspaces:
+        - name: data
+          workspace: tests-workspace
+      taskSpec:
+        workspaces:
+          - name: data
+        steps:
+          - name: setup-values
+            image: quay.io/konflux-ci/release-service-utils:e633d51cd41d73e4b3310face21bb980af7a662f
+            script: |
+              #!/usr/bin/env sh
+              set -eux
+
+              mkdir $(workspaces.data.path)/results
+              mkdir $(workspaces.data.path)/release/
+              cat > $(workspaces.data.path)/release/foo.json << EOF
+              { "example github release file": "just mock data" }
+              EOF
+              touch $(workspaces.data.path)/release/foo.zip
+              touch $(workspaces.data.path)/release/foo_SHA256SUMS
+              touch $(workspaces.data.path)/release/foo_SHA256SUMS.sig
+    - name: run-task
+      taskRef:
+        name: create-github-release
+      params:
+        - name: githubSecret
+          value: test-create-github-release-token
+        - name: repository
+          value: foo/bar
+        - name: release_version
+          value: 1.2.3
+        - name: content_directory
+          value: release/
+        - name: resultsDirPath
+          value: "results"
+      workspaces:
+        - name: data
+          workspace: tests-workspace
+      runAfter:
+        - setup
+    - name: check-result
+      workspaces:
+        - name: data
+          workspace: tests-workspace
+      taskSpec:
+        workspaces:
+          - name: data
+        steps:
+          - name: check-result
+            image: quay.io/konflux-ci/release-service-utils:e633d51cd41d73e4b3310face21bb980af7a662f
+            script: |
+              #!/usr/bin/env sh
+              set -eux
+
+              if [ $(cat $(workspaces.data.path)/mock_gh.txt | wc -l) != 1 ]; then
+                echo Error: gh was expected to be called 1 time. Actual calls:
+                cat $(workspaces.data.path)/mock_gh.txt
+                exit 1
+              fi
+      runAfter:
+        - run-task

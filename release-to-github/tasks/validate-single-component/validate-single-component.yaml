@@ -1,0 +1,33 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: validate-single-component
+  labels:
+    app.kubernetes.io/version: "0.5.0"
+  annotations:
+    tekton.dev/pipelines.minVersion: "0.12.1"
+    tekton.dev/tags: release
+spec:
+  description: >-
+    Tekton task validates that the snapshot only contains a 
+    single component. The task will fail otherwise.
+  params:
+    - name: snapshotPath
+      description: Path to the JSON string of the Snapshot spec in the data workspace
+      type: string
+  workspaces:
+    - name: data
+      description: Workspace where the snapshot is stored
+  steps:
+    - name: validate-single-component
+      image: quay.io/konflux-ci/release-service-utils:e633d51cd41d73e4b3310face21bb980af7a662f
+      script: |
+        #!/usr/bin/env sh
+        set -eux
+
+        COMPONENT_COUNT=$(jq '.components | length' "$(workspaces.data.path)/$(params.snapshotPath)")
+        if [ "$COMPONENT_COUNT" -gt 1 ]; then
+          echo "found $COMPONENT_COUNT components, only one component per application is supported."
+          exit 1
+        fi
