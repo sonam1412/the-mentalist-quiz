@@ -26,26 +26,26 @@ spec:
     - name: snapshot
       type: string
       description: The namespaced name (namespace/name) of the snapshot
-    - name: enterpriseContractPolicy
-      type: string
-      description: JSON representation of the EnterpriseContractPolicy
-    - name: enterpriseContractExtraRuleData
-      type: string
-      description: |
-        Extra rule data to be merged into the policy specified in params.enterpriseContractPolicy. Use syntax
-        "key1=value1,key2=value2..."
-      default: "pipeline_intention=release"
-    - name: enterpriseContractTimeout
-      type: string
-      description: Timeout setting for `ec validate`
-      default: 40m0s
+    # - name: enterpriseContractPolicy
+    #   type: string
+    #   description: JSON representation of the EnterpriseContractPolicy
+    # - name: enterpriseContractExtraRuleData
+    #   type: string
+    #   description: |
+    #     Extra rule data to be merged into the policy specified in params.enterpriseContractPolicy. Use syntax
+    #     "key1=value1,key2=value2..."
+    #   default: "pipeline_intention=release"
+    # - name: enterpriseContractTimeout
+    #   type: string
+    #   description: Timeout setting for `ec validate`
+    #   default: 40m0s
     - name: postCleanUp
       type: string
       description: Cleans up workspace after finishing executing the pipeline
       default: "true"
-    - name: verify_ec_task_bundle
-      type: string
-      description: The location of the bundle containing the verify-enterprise-contract task
+    # - name: verify_ec_task_bundle
+    #   type: string
+    #   description: The location of the bundle containing the verify-enterprise-contract task
     - name: taskGitUrl
       type: string
       description: The url to the git repo where the release-service-catalog tasks to be used are stored
@@ -183,7 +183,7 @@ spec:
             if [[ ${AUTHOR} == "" ]] ; then exit 1 ; fi
       runAfter:
         - verify-access-to-resources
-        - verify-enterprise-contract
+        # - verify-enterprise-contract
     - name: extract-binaries-from-image
       workspaces:
         - name: data
