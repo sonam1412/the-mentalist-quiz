@@ -15,7 +15,7 @@
 #
 name: Custom Policy
 description: >-
-  Contains rule related to gating each build to use 1.23.0 version of Go image in Dockerfile
+  Contains rule related to gating each build to use 1.23.1 version of Go image in Dockerfile
   Source: https://github.com/the-mentalist-quiz/ec-policy/policy.yaml
 
 sources:
