@@ -11,7 +11,6 @@ Tekton task that creates a release in GitHub.com via the API.
 | release_version | The version string of the new release                               | No       | -             |
 | commit_sha      | The commit SHA that triggered build in Konflux                      | No       | -             |
 | release_author  | The username of the release creator/requester                       | No       | -             |
-| image_url       | The url of the image built by Konflux                               | No       | -             |
 
 ## Results
 

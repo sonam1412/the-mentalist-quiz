@@ -27,9 +27,6 @@ spec:
     - name: release_author
       type: string
       description: "The username of the release creator/requester"
-    - name: image_url
-      type: string
-      description: "The url of the image built by Konflux"
   workspaces:
     - name: data
       description: The workspace where the binaries to release reside
@@ -52,16 +49,24 @@ spec:
           exit 1
         fi
 
+        # get latest release of konflux-test
+        latestRelease=$(curl -s https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases/latest | jq '.name')
+
+        newLatestRelease=$(echo $latestRelease | sed 's/[^0-9]*//g')
+        # increment release version and format it correctly
+        ((newLatest++))
+        newLatestRelease=$(echo "$newLatestRelease" | sed 's/[0-9]\B/&./g')
+
         RELEASE_RESPONSE=$(curl -X POST \
           -H "Authorization: token $GH_TOKEN" \
           -H "Accept: application/vnd.github+json" \
           https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases \
           -d @- <<EOF
           {
-            "tag_name": "$(params.release_version)",
+            "tag_name": "$(newLatestRelease)",
             "target_commitish": "$(params.commit_sha)",
-            "name": "Auto-generated Release by Konflux",
-            "body": ":tada: This release of the IMAGE:\n\`\`\`\n$(params.image_url)\n\`\`\`\n is created by the user: \`$(params.release_author)\` :sunglasses:",
+            "name": "$(newLatestRelease)",
+            "body": ":tada: This release is automatically created by the Konflux :tada:\n\n Release author: \`$(params.release_author)\`",
             "draft": false,
             "prerelease": false
           }
