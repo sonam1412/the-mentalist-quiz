@@ -52,10 +52,18 @@ spec:
         # get latest release of konflux-test
         latestRelease=$(curl -s https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases/latest | jq '.name')
 
-        newLatestRelease=$(echo $latestRelease | sed 's/[^0-9]*//g')
-        # increment release version and format it correctly
-        ((newLatest++))
-        newLatestRelease=$(echo "$newLatestRelease" | sed 's/[0-9]\B/&./g')
+        # Extract numbers from the version string using parameter expansion
+        newLatestRelease=${latestRelease//[!0-9]/}
+
+        # Increment the release version
+        ((newLatestRelease++))
+
+        # Format the new version correctly (e.g., 105 -> 1.0.6)
+        major=${newLatestRelease:0:1}
+        minor=${newLatestRelease:1:1}
+        patch=${newLatestRelease:2}
+
+        newLatestReleaseFormatted="v${major}.${minor}.${patch}"
 
         RELEASE_RESPONSE=$(curl -X POST \
           -H "Authorization: token $GH_TOKEN" \
@@ -63,9 +71,9 @@ spec:
           https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases \
           -d @- <<EOF
           {
-            "tag_name": "$(newLatestRelease)",
+            "tag_name": "$newLatestReleaseFormatted",
             "target_commitish": "$(params.commit_sha)",
-            "name": "$(newLatestRelease)",
+            "name": "$newLatestReleaseFormatted",
             "body": ":tada: This release is automatically created by the Konflux :tada:\n\n Release author: \`$(params.release_author)\`",
             "draft": false,
             "prerelease": false

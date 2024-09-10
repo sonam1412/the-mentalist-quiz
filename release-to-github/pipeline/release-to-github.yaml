@@ -13,7 +13,7 @@ spec:
     - name: verify_ec_task_bundle
       type: string
       description: The location of the bundle containing the verify-enterprise-contract task
-      default: "quay.io/enterprise-contract/ec-task-bundle:2fdddbbfdf5f2ba251a70b6378847a2b3630da4b"
+      default: "quay.io/enterprise-contract/ec-task-bundle:4b1df9d909379748b1945f10a7f5f802e4b06108"
     - name: enterpriseContractPolicy
       type: string
       description: EnterpriseContractPolicy that needs to be executed
@@ -124,26 +124,6 @@ spec:
             if [[ ${AUTHOR} == "" ]] ; then exit 1 ; fi
       runAfter:
         - verify-enterprise-contract
-    - name: extract-image-from-snapshot
-      workspaces:
-        - name: data
-          workspace: release-workspace
-      taskRef:
-        resolver: "git"
-        params:
-          - name: url
-            value: $(params.taskGitUrl)
-          - name: revision
-            value: $(params.taskGitRevision)
-          - name: pathInRepo
-            value: release-to-github/tasks/extract-image-from-snapshot/extract-image-from-snapshot.yaml
-      params:
-        - name: subdirectory
-          value: $(context.pipelineRun.uid)
-        - name: snapshotPath
-          value: $(tasks.collect-snapshot-spec.results.snapshotSpec)
-      runAfter:
-        - extract-requester-from-release
     - name: collect-github-params
       workspaces:
         - name: data
@@ -161,7 +141,7 @@ spec:
         - name: snapshotPath
           value: $(tasks.collect-snapshot-spec.results.snapshotSpec)
       runAfter:
-        - extract-image-from-snapshot
+        - extract-requester-from-release
     - name: create-github-release
       workspaces:
         - name: data
@@ -186,7 +166,5 @@ spec:
           value: $(tasks.collect-github-params.results.commit_sha)
         - name: release_author
           value: $(tasks.extract-requester-from-release.results.author)
-        - name: image_url
-          value: $(tasks.extract-image-from-snapshot.results.image_url)
       runAfter:
         - collect-github-params
