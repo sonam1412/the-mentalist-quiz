@@ -1,0 +1,29 @@
+#
+# To use this policy with the ec command line:
+#   ec validate image \
+#     --image $IMAGE \
+#     --public-key key.pub \
+#     --policy github.com/enterprise-contract/config//slsa3
+#
+# To use with an Konflux Enterprise Contract Integration Test CR:
+#   ...
+#   spec:
+#     params:
+#     - name: POLICY_CONFIGURATION
+#       value: github.com/enterprise-contract/config//slsa3
+#     ...
+#
+name: Custom Policy
+description: >-
+  Contains rule related to gating each build to use 1.23.1 version of Go image in Dockerfile
+  Source: https://github.com/the-mentalist-quiz/ec-policy/policy.yaml
+
+sources:
+  - name: Custom Policy
+    policy:
+      - oci::quay.io/enterprise-contract/ec-release-policy:latest
+      - github.com/dheerajodha/the-mentalist-quiz.git//ec-policy/rules?ref=add-custom-policy
+configuration:
+  include:
+    - verify_base_go_version
+    - cve
