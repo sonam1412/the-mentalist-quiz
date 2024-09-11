@@ -20,7 +20,6 @@ import data.lib
 #   solution: Update the version of Golang image in Dockerfile to 1.23.1
 deny contains result if {
     required_version := "1.23.1"
-    print(golang_version)
     not (required_version in golang_version)
 
     result := lib.result_helper(rego.metadata.chain(), [])
@@ -29,9 +28,7 @@ deny contains result if {
 # Rule to extract the Go version from the environment variables
 golang_version contains ver if {
     some env in input.image.config.Env
-    print(env)
     startswith(env, "GOLANG_VERSION=")
     split(env, "=", parts)
-    print(parts)
     ver = parts[1]
 }
