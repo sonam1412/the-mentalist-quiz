@@ -30,5 +30,7 @@ spec:
       script: |
         ./app-binary &
         sleep 30
+        # To prevent Tekton logs flooded by ANSI escape codes for coloured text
+        export NO_COLOR=1
         # Run Cypress tests
         cypress run --spec cypress/e2e/spec.cy.js
