@@ -2,6 +2,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: go-test-pipelinerun
+  labels:
+    appstudio.openshift.io/component: the-mentalist-quiz
 spec:
   pipelineRef:
     resolver: git
@@ -9,10 +11,10 @@ spec:
     - name: url 
       value: https://github.com/dheerajodha/the-mentalist-quiz
     - name: revision
-      value: main
+      value: fix-tekton-task-of-ui-tests
     - name: pathInRepo
       value: integration-tests/pipelines/test-pipeline.yaml
   workspaces:
-    - name: source
+    - name: shared-workspace
       persistentVolumeClaim:
         claimName: my-pvc

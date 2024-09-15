@@ -3,14 +3,104 @@ kind: Pipeline
 metadata:
   name: go-test-pipeline
 spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - description: 'Snapshot of the application'
+      name: SNAPSHOT
+      default: '{"components":[{"containerImage":"quay.io/redhat-user-workloads/rhn-support-djodha-tenant/the-mentalist-quiz/the-mentalist-quiz@sha256:410237206bde304b37916e03f1592a6ede640bdc180078f8a0d0d1ba3539844c","name":"the-mentalist-quiz","source":{"git":{"revision":"38365e9309601774ab083bd6abac65d8abd6d91f","url":"https://github.com/dheerajodha/the-mentalist-quiz"}}}]}'
+      type: string
   tasks:
-    - name: my-task
+    - name: test-metadata
+      taskRef:
+        resolver: git
+        params:
+        - name: url 
+          value: https://github.com/dirgim/integration-examples
+        - name: revision
+          value: test-metadata
+        - name: pathInRepo
+          value: tasks/test_metadata.yaml
+      params:
+        - name: SNAPSHOT
+          value: $(params.SNAPSHOT)
+    - name: checkout-repo
+      taskRef:
+        resolver: git
+        params:
+        - name: url
+          value: https://github.com/dheerajodha/the-mentalist-quiz
+        - name: revision
+          value: fix-tekton-task-of-ui-tests
+        - name: pathInRepo
+          value: integration-tests/task/checkout-repo.yaml
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: source-git-url
+          value: $(tasks.test-metadata.results.source-git-url)
+        - name: source-git-revision
+          value: $(tasks.test-metadata.results.source-git-revision)
+      runAfter:
+        - test-metadata
+    - name: list-files
+      runAfter:
+        - checkout-repo
       taskRef:
         resolver: git
         params:
         - name: url 
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: main
+          value: fix-tekton-task-of-ui-tests
         - name: pathInRepo
-          value: integration-tests/task/test-task.yaml
+          value: integration-tests/task/list-files.yaml
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: run-unit-tests
+      runAfter:
+        - list-files
+      taskRef:
+        resolver: git
+        params:
+        - name: url 
+          value: https://github.com/dheerajodha/the-mentalist-quiz
+        - name: revision
+          value: fix-tekton-task-of-ui-tests
+        - name: pathInRepo
+          value: integration-tests/task/run-unit-tests.yaml
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: build-app-binary
+      runAfter:
+        - run-unit-tests
+      taskRef:
+        resolver: git
+        params:
+        - name: url 
+          value: https://github.com/dheerajodha/the-mentalist-quiz
+        - name: revision
+          value: fix-tekton-task-of-ui-tests
+        - name: pathInRepo
+          value: integration-tests/task/build-app-binary.yaml
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+    - name: run-ui-tests
+      runAfter:
+        - build-app-binary
+      taskRef:
+        resolver: git
+        params:
+        - name: url 
+          value: https://github.com/dheerajodha/the-mentalist-quiz
+        - name: revision
+          value: fix-tekton-task-of-ui-tests
+        - name: pathInRepo
+          value: integration-tests/task/run-ui-tests.yaml
+      workspaces:
+        - name: source
+          workspace: shared-workspace

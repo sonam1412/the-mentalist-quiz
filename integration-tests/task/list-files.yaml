@@ -1,0 +1,13 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: list-files-task
+spec:
+  workspaces:
+    - name: source
+      description: The workspace where the repository is cloned
+  steps:
+    - name: list-files
+      image: quay.io/djodha/alpine-git:1.0.0
+      script: |
+        ls -l $(workspaces.source.path)

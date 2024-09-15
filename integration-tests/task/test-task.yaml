@@ -8,6 +8,8 @@ spec:
       image: alpine/git
       script: |
         git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
+        cd /workspace
+        git checkout d80fd8d3fe350744397ca8693ae86765425eb5e7
     - name: list-files
       image: alpine
       script: |

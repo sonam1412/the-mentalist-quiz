@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-unit-tests-task
+spec:
+  workspaces:
+    - name: source
+      description: The workspace where the repository will be cloned
+  steps:
+    - name: run-unit-tests
+      image: quay.io/djodha/golang:1.23.0-alpine
+      script: |
+        cd $(workspaces.source.path)
+        go test ./...
+        echo "Finshed running unit tests"

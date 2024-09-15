@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: checkout-repo-task
+spec:
+  params:
+    - name: source-git-url
+      type: string
+      description: The source url
+    - name: source-git-revision
+      type: string
+      description: The source commit SHA
+  workspaces:
+    - name: source
+      description: The workspace where the repository will be cloned
+  steps:
+    - name: checkout-repo
+      image: quay.io/djodha/alpine-git:1.0.0
+      script: |
+        echo "Cloning repository: $(params.source-git-url)"
+        TEMP_DIR=/tmp/repo
+        git clone $(params.source-git-url) $TEMP_DIR
+        echo "Repository cloned. Checking out revision: $(params.source-git-revision)"
+        cd $TEMP_DIR
+        git checkout $(params.source-git-revision)
+        echo "Moving repository to workspace"
+        cp -r $TEMP_DIR/* $(workspaces.source.path)

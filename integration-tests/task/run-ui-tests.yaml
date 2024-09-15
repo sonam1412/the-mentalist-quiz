@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-ui-tests-task
+spec:
+  workspaces:
+    - name: source
+      description: The workspace where the repository will be cloned
+  steps:
+    - name: run-ui-tests
+      image:  quay.io/djodha/cypress:1.0.0
+      script: |
+        cd $(workspaces.source.path)
+        npm install  # Install dependencies, including Cypress
+        ./app-binary &
+        sleep 20
+        export NO_COLOR=1
+        cypress run --spec cypress/e2e/spec.cy.js
+        echo "Finished running UI tests"
