@@ -13,6 +13,7 @@ spec:
   steps:
     - name: checkout-repo
       image: quay.io/djodha/alpine-git:1.0.0
+      workingDir: /workspace
       script: |
         echo "Cloning repository: $(params.source-git-url)"
         TEMP_DIR=/tmp/repo

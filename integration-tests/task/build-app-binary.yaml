@@ -6,6 +6,7 @@ spec:
   steps:
     - name: build-app-binary
       image: quay.io/djodha/golang:1.23.1
+      workingDir: /workspace
       script: |
         cd /workspace
         go build -o app-binary .

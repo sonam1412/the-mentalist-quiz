@@ -6,5 +6,6 @@ spec:
   steps:
     - name: list-files
       image: quay.io/djodha/alpine-git:1.0.0
+      workingDir: /workspace
       script: |
         ls -l /workspace

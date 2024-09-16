@@ -6,6 +6,7 @@ spec:
   steps:
     - name: run-unit-tests
       image: quay.io/djodha/golang:1.23.1
+      workingDir: /workspace
       script: |
         cd /workspace
         go test ./...
