@@ -3,13 +3,10 @@ kind: Task
 metadata:
   name: run-unit-tests-task
 spec:
-  workspaces:
-    - name: source
-      description: The workspace where the repository will be cloned
   steps:
     - name: run-unit-tests
       image: quay.io/djodha/golang:1.23.0-alpine
       script: |
-        cd $(workspaces.source.path)
+        cd /workspace
         go test ./...
         echo "Finshed running unit tests"

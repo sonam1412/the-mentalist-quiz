@@ -10,9 +10,6 @@ spec:
     - name: source-git-revision
       type: string
       description: The source commit SHA
-  workspaces:
-    - name: source
-      description: The workspace where the repository will be cloned
   steps:
     - name: checkout-repo
       image: quay.io/djodha/alpine-git:1.0.0
@@ -24,4 +21,4 @@ spec:
         cd $TEMP_DIR
         git checkout $(params.source-git-revision)
         echo "Moving repository to workspace"
-        cp -r $TEMP_DIR/* $(workspaces.source.path)
+        cp -r $TEMP_DIR/* /workspace

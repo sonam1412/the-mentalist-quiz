@@ -3,15 +3,12 @@ kind: Task
 metadata:
   name: run-ui-tests-task
 spec:
-  workspaces:
-    - name: source
-      description: The workspace where the repository will be cloned
   steps:
     - name: run-ui-tests
       image:  quay.io/djodha/cypress:1.0.0
       script: |
-        cd $(workspaces.source.path)
-        npm install  # Install dependencies, including Cypress
+        cd /workspace
+        npm install  # Install dependencies
         ./app-binary &
         sleep 20
         export NO_COLOR=1

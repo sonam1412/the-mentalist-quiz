@@ -3,12 +3,10 @@ kind: Pipeline
 metadata:
   name: go-test-pipeline
 spec:
-  workspaces:
-    - name: shared-workspace
   params:
     - description: 'Snapshot of the application'
       name: SNAPSHOT
-      default: '{"components":[{"containerImage":"quay.io/redhat-user-workloads/rhn-support-djodha-tenant/the-mentalist-quiz/the-mentalist-quiz@sha256:410237206bde304b37916e03f1592a6ede640bdc180078f8a0d0d1ba3539844c","name":"the-mentalist-quiz","source":{"git":{"revision":"38365e9309601774ab083bd6abac65d8abd6d91f","url":"https://github.com/dheerajodha/the-mentalist-quiz"}}}]}'
+      default: '{"components": [{"name":"test-app", "containerImage": "quay.io/example/repo:latest"}]}'
       type: string
   tasks:
     - name: test-metadata
@@ -34,9 +32,6 @@ spec:
           value: fix-tekton-task-of-ui-tests
         - name: pathInRepo
           value: integration-tests/task/checkout-repo.yaml
-      workspaces:
-        - name: source
-          workspace: shared-workspace
       params:
         - name: source-git-url
           value: $(tasks.test-metadata.results.source-git-url)
@@ -56,9 +51,6 @@ spec:
           value: fix-tekton-task-of-ui-tests
         - name: pathInRepo
           value: integration-tests/task/list-files.yaml
-      workspaces:
-        - name: source
-          workspace: shared-workspace
     - name: run-unit-tests
       runAfter:
         - list-files
@@ -71,9 +63,6 @@ spec:
           value: fix-tekton-task-of-ui-tests
         - name: pathInRepo
           value: integration-tests/task/run-unit-tests.yaml
-      workspaces:
-        - name: source
-          workspace: shared-workspace
     - name: build-app-binary
       runAfter:
         - run-unit-tests
@@ -86,9 +75,6 @@ spec:
           value: fix-tekton-task-of-ui-tests
         - name: pathInRepo
           value: integration-tests/task/build-app-binary.yaml
-      workspaces:
-        - name: source
-          workspace: shared-workspace
     - name: run-ui-tests
       runAfter:
         - build-app-binary
@@ -101,6 +87,3 @@ spec:
           value: fix-tekton-task-of-ui-tests
         - name: pathInRepo
           value: integration-tests/task/run-ui-tests.yaml
-      workspaces:
-        - name: source
-          workspace: shared-workspace
