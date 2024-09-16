@@ -29,7 +29,7 @@ spec:
         - name: url
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: fix-tekton-task-of-ui-tests
+          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
         - name: pathInRepo
           value: integration-tests/task/checkout-repo.yaml
       params:
@@ -48,7 +48,7 @@ spec:
         - name: url 
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: fix-tekton-task-of-ui-tests
+          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
         - name: pathInRepo
           value: integration-tests/task/list-files.yaml
     - name: run-unit-tests
@@ -60,7 +60,7 @@ spec:
         - name: url 
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: fix-tekton-task-of-ui-tests
+          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
         - name: pathInRepo
           value: integration-tests/task/run-unit-tests.yaml
     - name: build-app-binary
@@ -72,7 +72,7 @@ spec:
         - name: url 
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: fix-tekton-task-of-ui-tests
+          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
         - name: pathInRepo
           value: integration-tests/task/build-app-binary.yaml
     - name: run-ui-tests
@@ -84,6 +84,6 @@ spec:
         - name: url 
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: fix-tekton-task-of-ui-tests
+          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
         - name: pathInRepo
           value: integration-tests/task/run-ui-tests.yaml
