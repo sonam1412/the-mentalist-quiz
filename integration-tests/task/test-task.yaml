@@ -1,0 +1,47 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: go-test-task
+spec:
+  params:
+    - name: source-git-url
+      type: string
+      description: The source url
+    - name: source-git-revision
+      type: string
+      description: The source commit SHA
+  steps:
+    - name: checkout-repo
+      image: quay.io/djodha/alpine-git:1.0.0
+      script: |
+        echo "Cloning repository: $(params.source-git-url)"
+        git clone $(params.source-git-url) /workspace
+        echo "Repository cloned. Checking out revision: $(params.source-git-revision)"
+        cd /workspace
+        git checkout $(params.source-git-revision)
+    - name: list-files
+      image: quay.io/djodha/alpine-git:1.0.0
+      script: |
+        ls -l /workspace
+    - name: run-unit-tests
+      image: quay.io/djodha/golang:1.23.1
+      script: |
+        cd /workspace
+        go test ./...
+        echo "Finished running unit tests"
+    - name: build-app-binary
+      image: quay.io/djodha/golang:1.23.1
+      script: |
+        cd /workspace
+        go build -o app-binary .
+        echo "Successfully built the Golang application binary"
+    - name: run-ui-tests
+      image:  quay.io/djodha/cypress:1.0.0
+      script: |
+        cd /workspace
+        npm install  # Install dependencies
+        ./app-binary &
+        sleep 20
+        export NO_COLOR=1
+        cypress run --spec cypress/e2e/spec.cy.js
+        echo "Finished running UI tests"

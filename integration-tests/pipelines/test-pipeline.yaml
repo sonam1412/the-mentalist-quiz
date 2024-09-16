@@ -22,16 +22,16 @@ spec:
       params:
         - name: SNAPSHOT
           value: $(params.SNAPSHOT)
-    - name: checkout-repo
+    - name: go-test-task
       taskRef:
         resolver: git
         params:
         - name: url
           value: https://github.com/dheerajodha/the-mentalist-quiz
         - name: revision
-          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
+          value: compress-tasks-to-1
         - name: pathInRepo
-          value: integration-tests/task/checkout-repo.yaml
+          value: integration-tests/task/test-task.yaml
       params:
         - name: source-git-url
           value: $(tasks.test-metadata.results.source-git-url)
@@ -39,51 +39,3 @@ spec:
           value: $(tasks.test-metadata.results.source-git-revision)
       runAfter:
         - test-metadata
-    - name: list-files
-      runAfter:
-        - checkout-repo
-      taskRef:
-        resolver: git
-        params:
-        - name: url 
-          value: https://github.com/dheerajodha/the-mentalist-quiz
-        - name: revision
-          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
-        - name: pathInRepo
-          value: integration-tests/task/list-files.yaml
-    - name: run-unit-tests
-      runAfter:
-        - list-files
-      taskRef:
-        resolver: git
-        params:
-        - name: url 
-          value: https://github.com/dheerajodha/the-mentalist-quiz
-        - name: revision
-          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
-        - name: pathInRepo
-          value: integration-tests/task/run-unit-tests.yaml
-    - name: build-app-binary
-      runAfter:
-        - run-unit-tests
-      taskRef:
-        resolver: git
-        params:
-        - name: url 
-          value: https://github.com/dheerajodha/the-mentalist-quiz
-        - name: revision
-          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
-        - name: pathInRepo
-          value: integration-tests/task/build-app-binary.yaml
-    - name: run-ui-tests
-      runAfter:
-        - build-app-binary
-      taskRef:
-        resolver: git
-        params:
-        - name: url 
-          value: https://github.com/dheerajodha/the-mentalist-quiz
-        - name: revision
-          value: fix-tkn-task-of-ui-tests-n-make-konflux-compatible-workspaces
-        - name: pathInRepo
-          value: integration-tests/task/run-ui-tests.yaml

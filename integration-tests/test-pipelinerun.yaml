@@ -11,10 +11,10 @@ spec:
     - name: url 
       value: https://github.com/dheerajodha/the-mentalist-quiz
     - name: revision
-      value: fix-tekton-task-of-ui-tests
+      value: main
     - name: pathInRepo
       value: integration-tests/pipelines/test-pipeline.yaml
   workspaces:
-    - name: shared-workspace
+    - name: source
       persistentVolumeClaim:
         claimName: my-pvc
