@@ -2,6 +2,8 @@ apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
   name: go-test-pipelinerun
+  labels:
+    appstudio.openshift.io/component: the-mentalist-quiz
 spec:
   pipelineRef:
     resolver: git

@@ -3,34 +3,45 @@ kind: Task
 metadata:
   name: go-test-task
 spec:
+  params:
+    - name: source-git-url
+      type: string
+      description: The source url
+    - name: source-git-revision
+      type: string
+      description: The source commit SHA
   steps:
-    - name: checkout-source
-      image: alpine/git
+    - name: checkout-repo
+      image: quay.io/djodha/alpine-git:1.0.0
       script: |
-        git clone https://github.com/dheerajodha/the-mentalist-quiz.git /workspace
+        echo "Cloning repository: $(params.source-git-url)"
+        git clone $(params.source-git-url) /workspace
+        echo "Repository cloned. Checking out revision: $(params.source-git-revision)"
+        cd /workspace
+        git checkout $(params.source-git-revision)
     - name: list-files
-      image: alpine
+      image: quay.io/djodha/alpine-git:1.0.0
       script: |
         ls -l /workspace
     - name: run-unit-tests
-      image: golang:1.21
-      workingDir: /workspace
+      image: quay.io/djodha/golang:1.23.1
       script: |
-        go test ./... > tests.log
-        cat tests.log
-    - name: start-application
-      image: golang:1.21
-      workingDir: /workspace
+        cd /workspace
+        go test ./...
+        echo "Finished running unit tests"
+    - name: build-app-binary
+      image: quay.io/djodha/golang:1.23.1
       script: |
-        # Start the application
+        cd /workspace
         go build -o app-binary .
+        echo "Successfully built the Golang application binary"
     - name: run-ui-tests
-      image: cypress/included:13.13.0
-      workingDir: /workspace
+      image:  quay.io/djodha/cypress:1.0.0
       script: |
+        cd /workspace
+        npm install  # Install dependencies
         ./app-binary &
-        sleep 30
-        # To prevent Tekton logs flooded by ANSI escape codes for coloured text
+        sleep 20
         export NO_COLOR=1
-        # Run Cypress tests
         cypress run --spec cypress/e2e/spec.cy.js
+        echo "Finished running UI tests"
