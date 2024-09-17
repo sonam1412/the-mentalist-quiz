@@ -392,7 +392,7 @@ spec:
       - input: $(params.skip-checks)
         operator: in
         values:
-        - "false"
+        - "true"
     - name: apply-tags
       params:
       - name: IMAGE
