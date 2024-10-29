@@ -100,7 +100,7 @@ metadata:
   name: my-github-secret
 type: Opaque
 data:
-  token: <your-github-token-goes-here>
+  token: $(echo -n '<your-github-token-goes-here>' | base64)
 EOF>>
 ```
 
