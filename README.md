@@ -1,1 +1,1 @@
-Namaste Integration and Konflux QE team!
+Namaste Integration team!
