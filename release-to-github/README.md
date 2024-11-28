@@ -27,7 +27,7 @@ metadata:
   namespace: <your-namespace-goes-here>
 spec:
   application: <your-application-name-goes-here>
-  pipeline:
+  tenantPipeline:
     serviceAccountName: my-serviceaccount 
     pipelineRef: # (Optional) replace with wherever your release pipeline lives
       resolver: git
