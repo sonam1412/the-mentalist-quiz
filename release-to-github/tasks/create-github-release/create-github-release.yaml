@@ -18,9 +18,6 @@ spec:
     - name: username
       type: string
       description: "The github username of the repo where the release should be created"
-    - name: release_version
-      type: string
-      description: "The version string of the new release"
     - name: commit_sha
       type: string
       description: "The commit SHA that triggered build in Konflux"
@@ -49,22 +46,28 @@ spec:
           exit 1
         fi
 
-        # get latest release of konflux-test
-        latestRelease=$(curl -s https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases/latest | jq '.name')
+        # Get the latest release of the repository
+        latestRelease=$(curl -s https://api.github.com/repos/"$(params.username)"/"$(params.repository)"/releases/latest | jq -r '.name')
 
-        # Extract numbers from the version string using parameter expansion
-        newLatestRelease=${latestRelease//[!0-9]/}
+        # Handle case where there are no previous releases
+        if [ "$latestRelease" = "null" ] || [ -z "$latestRelease" ]; then
+          newLatestReleaseFormatted="v1.0.0"
+        else
+          # Extract numbers from the version string using parameter expansion
+          newLatestRelease=${latestRelease//[!0-9]/}
 
-        # Increment the release version
-        ((newLatestRelease++))
+          # Increment the release version
+          ((newLatestRelease++))
 
-        # Format the new version correctly (e.g., 105 -> 1.0.6)
-        major=${newLatestRelease:0:1}
-        minor=${newLatestRelease:1:1}
-        patch=${newLatestRelease:2}
+          # Format the new version correctly (e.g., 105 -> 1.0.6)
+          major=${newLatestRelease:0:1}
+          minor=${newLatestRelease:1:1}
+          patch=${newLatestRelease:2}
 
-        newLatestReleaseFormatted="v${major}.${minor}.${patch}"
+          newLatestReleaseFormatted="v${major}.${minor}.${patch}"
+        fi
 
+        # Create the new release
         RELEASE_RESPONSE=$(curl -X POST \
           -H "Authorization: token $GH_TOKEN" \
           -H "Accept: application/vnd.github+json" \
@@ -90,6 +93,7 @@ spec:
           exit 1
         fi
 
+        # Parse the release URL
         RELEASE_URL=$(echo "$RELEASE_RESPONSE" | jq -r .html_url)
 
         echo "Created release URL: $RELEASE_URL"

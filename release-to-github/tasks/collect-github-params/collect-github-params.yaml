@@ -22,9 +22,6 @@ spec:
     - name: repository
       type: string
       description: "The github repository where the release should be created"
-    - name: release_version
-      type: string
-      description: "The version string of the new release"
     - name: username
       type: string
       description: "The username of the repo where release will be created"
@@ -44,9 +41,6 @@ spec:
             echo "No valid snapshot file was provided."
             exit 1
         fi
-
-        RELEASE_VERSION=v0.1
-        echo -n "$RELEASE_VERSION" > "$(results.release_version.path)"
 
         COMMIT_SHA=$(jq -jr '.components[0].source.git.revision' "${SNAPSHOT_SPEC_FILE}")
         GITHUB_URL=$(jq -jr '.components[0].source.git.url' "${SNAPSHOT_SPEC_FILE}")

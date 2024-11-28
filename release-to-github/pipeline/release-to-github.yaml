@@ -160,8 +160,6 @@ spec:
           value: $(tasks.collect-github-params.results.repository)
         - name: username
           value: $(tasks.collect-github-params.results.username)
-        - name: release_version
-          value: $(tasks.collect-github-params.results.release_version)
         - name: commit_sha
           value: $(tasks.collect-github-params.results.commit_sha)
         - name: release_author
