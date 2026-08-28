@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/dheerajodha/the-mentalist-quiz#readme",
   "devDependencies": {
-    "cypress": "^13.13.1"
+    "cypress": "^15.0.0"
   }
 }
